@@ -166,6 +166,7 @@
          <framework src="MobileCoreServices.framework" />
          <framework src="CoreGraphics.framework" />
          <framework src="AVFoundation.framework" />
+         <framework src="Photos.framework" />
 
      </platform>
 
@@ -271,3 +272,4 @@
 
 
 </plugin>
+
