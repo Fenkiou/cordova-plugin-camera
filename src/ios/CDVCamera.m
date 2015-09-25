@@ -94,6 +94,7 @@ static NSString* toBase64(NSData* data) {
 @interface CDVCamera ()
 
 @property (readwrite, assign) BOOL hasPendingOperation;
+@property(nonatomic, strong, nullable) __kindof UIView *cameraOverlayView;
 
 @end
 
@@ -184,6 +185,45 @@ static NSString* toBase64(NSData* data) {
 
         CDVCameraPicker* cameraPicker = [CDVCameraPicker createFromPictureOptions:pictureOptions];
         weakSelf.pickerController = cameraPicker;
+
+        NSString *imagePath =[command argumentAtIndex:12 withDefault:nil];
+
+        // Add overlay only when source is UIImagePickerControllerSourceTypeCamera
+        if (pictureOptions.sourceType == UIImagePickerControllerSourceTypeCamera && imagePath) {
+            CGFloat previewPosY = 0;
+            CGFloat screenHeight = weakSelf.pickerController.view.frame.size.height;
+            CGFloat screenWidth = weakSelf.pickerController.view.frame.size.width;
+            CGFloat ratio = 1.33125;
+
+            CGFloat previewHeight = screenHeight;
+
+            if (screenHeight > 480)
+            {
+                previewPosY = 44;
+                previewHeight = ceil(screenWidth * ratio);
+            }
+
+            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, previewPosY, screenWidth, previewHeight)];
+
+            NSURL *imageURL = [NSURL URLWithString:imagePath];
+            NSArray<NSURL *> *assetURL = [NSArray arrayWithObject:imageURL];
+
+            PHFetchResult *fetchResult = [PHAsset fetchAssetsWithALAssetURLs:assetURL options:nil];
+            PHAsset *asset = [fetchResult firstObject];
+
+            PHImageManager *imageManager = [[PHImageManager alloc] init];
+
+            [imageManager requestImageDataForAsset:asset options:nil resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
+                UIImage *image = [UIImage imageWithData:imageData];
+                [imageView setImage:image];
+            }];
+
+            weakSelf.pickerController.cameraOverlayView = imageView;
+            weakSelf.pickerController.cameraOverlayView.alpha = 0.5;
+            weakSelf.pickerController.cameraOverlayView.userInteractionEnabled = NO;
+
+            [weakSelf.pickerController.view addSubview:weakSelf.pickerController.cameraOverlayView];
+        }
 
         cameraPicker.delegate = weakSelf;
         cameraPicker.callbackId = command.callbackId;
@@ -490,6 +530,7 @@ static NSString* toBase64(NSData* data) {
         {
             image = [self retrieveImage:info options:options];
             NSData* data = [self processImage:image info:info options:options];
+
             if (data)  {
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:toBase64(data)];
             }
@@ -533,6 +574,9 @@ static NSString* toBase64(NSData* data) {
         }
         else {
             result = [weakSelf resultForVideo:info];
+        }
+
+        if (result) {
             [weakSelf.commandDelegate sendPluginResult:result callbackId:cameraPicker.callbackId];
             weakSelf.hasPendingOperation = NO;
             weakSelf.pickerController = nil;
@@ -572,12 +616,25 @@ static NSString* toBase64(NSData* data) {
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"No Image Selected"];
         }
 
-
         [weakSelf.commandDelegate sendPluginResult:result callbackId:cameraPicker.callbackId];
 
         weakSelf.hasPendingOperation = NO;
         weakSelf.pickerController = nil;
     };
+    // Kept to check if wrong merge
+    //dispatch_block_t invoke = ^ (void) {
+    //    CDVPluginResult* result;
+    //    if ([ALAssetsLibrary authorizationStatus] == ALAuthorizationStatusAuthorized) {
+    //        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"no image selected"];
+    //    } else {
+    //        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"has no access to assets"];
+    //    }
+    //
+    //    [weakSelf.commandDelegate sendPluginResult:result callbackId:cameraPicker.callbackId];
+    //
+    //    weakSelf.hasPendingOperation = NO;
+    //    weakSelf.pickerController = nil;
+    //};
 
     [[cameraPicker presentingViewController] dismissViewControllerAnimated:YES completion:invoke];
 }

@@ -21,6 +21,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <CoreLocation/CLLocationManager.h>
 #import <Cordova/CDVPlugin.h>
+#import <Photos/Photos.h>
 
 enum CDVDestinationType {
     DestinationTypeDataUrl = 0,
