@@ -144,7 +144,8 @@ static NSString* toBase64(NSData* data) {
 {
     self.hasPendingOperation = YES;
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotification:) name:@"_UIImagePickerControllerUserDidCaptureItem" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveOverlayOverTakenPicture) name:@"_UIImagePickerControllerUserDidCaptureItem" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveOverlayOverPreviewPicture) name:@"_UIImagePickerControllerUserDidRejectItem" object:nil];
 
     __weak CDVCamera* weakSelf = self;
 
@@ -229,44 +230,10 @@ static NSString* toBase64(NSData* data) {
     }];
 }
 
-- (void)handleNotification:(NSNotification *)message {
-    __weak CDVCamera* weakSelf = self;
-
-    if ([[message name] isEqualToString:@"_UIImagePickerControllerUserDidCaptureItem"]) {
-        CGFloat previewPosX = 0;
-        CGFloat previewPosY = 0;
-        CGFloat screenHeight = weakSelf.pickerController.view.frame.size.height;
-        CGFloat screenWidth = weakSelf.pickerController.view.frame.size.width;
-        CGFloat ratio = 1.33;
-
-        CGFloat previewHeight = screenHeight;
-
-        if (screenHeight > 480)
-        {
-            previewPosY = 83;
-            previewHeight = ceil(screenWidth * ratio);
-        }
-
-        weakSelf.pickerController.cameraOverlayView.frame = CGRectMake(previewPosX, previewPosY, screenWidth, previewHeight);
-    }
-}
-
 - (UIImageView*)addOverlayViewWithImageURI:(NSString*)imageURI andviewFrame:(CGRect)viewFrame {
-    CGFloat previewPosX = 0;
-    CGFloat previewPosY = 0;
-    CGFloat screenHeight = viewFrame.size.height;
-    CGFloat screenWidth = viewFrame.size.width;
-    CGFloat ratio = 1.33;
+    CGRect rect = [self defineRectForOverlayViewWithCustomPosY:44 andviewFrame:viewFrame];
 
-    CGFloat previewHeight = screenHeight;
-
-    if (screenHeight > 480)
-    {
-        previewPosY = 44;
-        previewHeight = ceil(screenWidth * ratio);
-    }
-
-    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(previewPosX, previewPosY, screenWidth, previewHeight)];
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:rect];
 
     NSURL *_imageURI = [NSURL URLWithString:imageURI];
     NSArray<NSURL *> *assetURL = [NSArray arrayWithObject:_imageURI];
@@ -282,6 +249,42 @@ static NSString* toBase64(NSData* data) {
     }];
 
     return imageView;
+}
+
+- (void)moveOverlayOverTakenPicture {
+    __weak CDVCamera* weakSelf = self;
+
+    CGRect rect = [self defineRectForOverlayViewWithCustomPosY:83 andviewFrame:weakSelf.pickerController.view.frame];
+
+    weakSelf.pickerController.cameraOverlayView.frame = rect;
+}
+
+- (void)moveOverlayOverPreviewPicture {
+    __weak CDVCamera* weakSelf = self;
+
+    CGRect rect = [self defineRectForOverlayViewWithCustomPosY:44 andviewFrame:weakSelf.pickerController.view.frame];
+
+    weakSelf.pickerController.cameraOverlayView.frame = rect;
+}
+
+- (CGRect)defineRectForOverlayViewWithCustomPosY:(CGFloat)customPosY andviewFrame:(CGRect)viewFrame {
+    CGFloat previewPosX = 0;
+    CGFloat previewPosY = 0;
+    CGFloat screenHeight = viewFrame.size.height;
+    CGFloat screenWidth = viewFrame.size.width;
+    CGFloat ratio = 1.33;
+
+    CGFloat previewHeight = screenHeight;
+
+    if (screenHeight > 480)
+    {
+        previewPosY = customPosY;
+        previewHeight = ceil(screenWidth * ratio);
+    }
+
+    CGRect rect = CGRectMake(previewPosX, previewPosY, screenWidth, previewHeight);
+
+    return rect;
 }
 
 // Delegate for camera permission UIAlertView
