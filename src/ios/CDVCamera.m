@@ -85,6 +85,8 @@ static NSString* toBase64(NSData* data) {
     pictureOptions.popoverSupported = NO;
     pictureOptions.usesGeolocation = NO;
 
+    pictureOptions.imageURI = [command argumentAtIndex:12 withDefault:nil];
+
     return pictureOptions;
 }
 
@@ -188,10 +190,8 @@ static NSString* toBase64(NSData* data) {
         CDVCameraPicker* cameraPicker = [CDVCameraPicker createFromPictureOptions:pictureOptions];
         weakSelf.pickerController = cameraPicker;
 
-        NSString *imagePath =[command argumentAtIndex:12 withDefault:nil];
-
         // Add overlay only when source is UIImagePickerControllerSourceTypeCamera
-        if (pictureOptions.sourceType == UIImagePickerControllerSourceTypeCamera && imagePath) {
+        if (pictureOptions.sourceType == UIImagePickerControllerSourceTypeCamera && pictureOptions.imageURI) {
             CGFloat previewPosX = 0;
             CGFloat previewPosY = 0;
             CGFloat screenHeight = weakSelf.pickerController.view.frame.size.height;
@@ -208,8 +208,8 @@ static NSString* toBase64(NSData* data) {
 
             UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(previewPosX, previewPosY, screenWidth, previewHeight)];
 
-            NSURL *imageURL = [NSURL URLWithString:imagePath];
-            NSArray<NSURL *> *assetURL = [NSArray arrayWithObject:imageURL];
+            NSURL *imageURI = [NSURL URLWithString:pictureOptions.imageURI];
+            NSArray<NSURL *> *assetURL = [NSArray arrayWithObject:imageURI];
 
             PHFetchResult *fetchResult = [PHAsset fetchAssetsWithALAssetURLs:assetURL options:nil];
             PHAsset *asset = [fetchResult firstObject];
