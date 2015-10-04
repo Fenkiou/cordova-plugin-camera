@@ -141,6 +141,8 @@ static NSString* toBase64(NSData* data) {
 {
     self.hasPendingOperation = YES;
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotification:) name:@"_UIImagePickerControllerUserDidCaptureItem" object:nil];
+
     __weak CDVCamera* weakSelf = self;
 
     [self.commandDelegate runInBackground:^{
@@ -190,10 +192,11 @@ static NSString* toBase64(NSData* data) {
 
         // Add overlay only when source is UIImagePickerControllerSourceTypeCamera
         if (pictureOptions.sourceType == UIImagePickerControllerSourceTypeCamera && imagePath) {
+            CGFloat previewPosX = 0;
             CGFloat previewPosY = 0;
             CGFloat screenHeight = weakSelf.pickerController.view.frame.size.height;
             CGFloat screenWidth = weakSelf.pickerController.view.frame.size.width;
-            CGFloat ratio = 1.33125;
+            CGFloat ratio = 1.33;
 
             CGFloat previewHeight = screenHeight;
 
@@ -203,7 +206,7 @@ static NSString* toBase64(NSData* data) {
                 previewHeight = ceil(screenWidth * ratio);
             }
 
-            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, previewPosY, screenWidth, previewHeight)];
+            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(previewPosX, previewPosY, screenWidth, previewHeight)];
 
             NSURL *imageURL = [NSURL URLWithString:imagePath];
             NSArray<NSURL *> *assetURL = [NSArray arrayWithObject:imageURL];
@@ -252,6 +255,28 @@ static NSString* toBase64(NSData* data) {
             }
         });
     }];
+}
+
+- (void)handleNotification:(NSNotification *)message {
+    __weak CDVCamera* weakSelf = self;
+
+    if ([[message name] isEqualToString:@"_UIImagePickerControllerUserDidCaptureItem"]) {
+        CGFloat previewPosX = 0;
+        CGFloat previewPosY = 0;
+        CGFloat screenHeight = weakSelf.pickerController.view.frame.size.height;
+        CGFloat screenWidth = weakSelf.pickerController.view.frame.size.width;
+        CGFloat ratio = 1.33;
+
+        CGFloat previewHeight = screenHeight;
+
+        if (screenHeight > 480)
+        {
+            previewPosY = 83;
+            previewHeight = ceil(screenWidth * ratio);
+        }
+
+        weakSelf.pickerController.cameraOverlayView.frame = CGRectMake(previewPosX, previewPosY, screenWidth, previewHeight);
+    }
 }
 
 // Delegate for camera permission UIAlertView
