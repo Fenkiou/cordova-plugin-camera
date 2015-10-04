@@ -87,6 +87,7 @@ static NSString* toBase64(NSData* data) {
 
     pictureOptions.imageURI = [command argumentAtIndex:12 withDefault:nil];
 
+
     return pictureOptions;
 }
 
@@ -187,36 +188,10 @@ static NSString* toBase64(NSData* data) {
         CDVCameraPicker* cameraPicker = [CDVCameraPicker createFromPictureOptions:pictureOptions];
         weakSelf.pickerController = cameraPicker;
 
+
         // Add overlay only when source is UIImagePickerControllerSourceTypeCamera
         if (pictureOptions.sourceType == UIImagePickerControllerSourceTypeCamera && pictureOptions.imageURI) {
-            CGFloat previewPosX = 0;
-            CGFloat previewPosY = 0;
-            CGFloat screenHeight = weakSelf.pickerController.view.frame.size.height;
-            CGFloat screenWidth = weakSelf.pickerController.view.frame.size.width;
-            CGFloat ratio = 1.33;
-
-            CGFloat previewHeight = screenHeight;
-
-            if (screenHeight > 480)
-            {
-                previewPosY = 44;
-                previewHeight = ceil(screenWidth * ratio);
-            }
-
-            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(previewPosX, previewPosY, screenWidth, previewHeight)];
-
-            NSURL *imageURI = [NSURL URLWithString:pictureOptions.imageURI];
-            NSArray<NSURL *> *assetURL = [NSArray arrayWithObject:imageURI];
-
-            PHFetchResult *fetchResult = [PHAsset fetchAssetsWithALAssetURLs:assetURL options:nil];
-            PHAsset *asset = [fetchResult firstObject];
-
-            PHImageManager *imageManager = [[PHImageManager alloc] init];
-
-            [imageManager requestImageDataForAsset:asset options:nil resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
-                UIImage *image = [UIImage imageWithData:imageData];
-                [imageView setImage:image];
-            }];
+            UIImageView *imageView = [self addOverlayViewWithImageURI:pictureOptions.imageURI andviewFrame:weakSelf.pickerController.view.frame];
 
             weakSelf.pickerController.cameraOverlayView = imageView;
             weakSelf.pickerController.cameraOverlayView.alpha = 0.5;
@@ -274,6 +249,39 @@ static NSString* toBase64(NSData* data) {
 
         weakSelf.pickerController.cameraOverlayView.frame = CGRectMake(previewPosX, previewPosY, screenWidth, previewHeight);
     }
+}
+
+- (UIImageView*)addOverlayViewWithImageURI:(NSString*)imageURI andviewFrame:(CGRect)viewFrame {
+    CGFloat previewPosX = 0;
+    CGFloat previewPosY = 0;
+    CGFloat screenHeight = viewFrame.size.height;
+    CGFloat screenWidth = viewFrame.size.width;
+    CGFloat ratio = 1.33;
+
+    CGFloat previewHeight = screenHeight;
+
+    if (screenHeight > 480)
+    {
+        previewPosY = 44;
+        previewHeight = ceil(screenWidth * ratio);
+    }
+
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(previewPosX, previewPosY, screenWidth, previewHeight)];
+
+    NSURL *_imageURI = [NSURL URLWithString:imageURI];
+    NSArray<NSURL *> *assetURL = [NSArray arrayWithObject:_imageURI];
+
+    PHFetchResult *fetchResult = [PHAsset fetchAssetsWithALAssetURLs:assetURL options:nil];
+    PHAsset *asset = [fetchResult firstObject];
+
+    PHImageManager *imageManager = [[PHImageManager alloc] init];
+
+    [imageManager requestImageDataForAsset:asset options:nil resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
+        UIImage *image = [UIImage imageWithData:imageData];
+        [imageView setImage:image];
+    }];
+
+    return imageView;
 }
 
 // Delegate for camera permission UIAlertView
