@@ -40,6 +40,8 @@ module.exports = {
         FILE_URI: 1,
         /** Return native uri (eg. asset-library://... for iOS) */
         NATIVE_URI: 2
+        /** Return file and native uri */
+        ALL_URI: 3
     },
     /**
      * @enum {number}
