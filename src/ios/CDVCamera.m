@@ -560,6 +560,35 @@ static NSString* toBase64(NSData* data) {
             }
         }
             break;
+        case DestinationTypeAllUri:
+        {
+            NSURL* url = (NSURL*)[info objectForKey:UIImagePickerControllerReferenceURL];
+            NSString* nativeUri = [[self urlTransformer:url] absoluteString];
+            saveToPhotoAlbum = NO;
+
+            image = [self retrieveImage:info options:options];
+            NSData* data = [self processImage:image info:info options:options];
+            NSString* fileUri = [[NSString alloc] init];
+
+            if (data) {
+
+                NSString* extension = options.encodingType == EncodingTypePNG? @"png" : @"jpg";
+                NSString* filePath = [self tempFilePath:extension];
+                NSError* err = nil;
+
+                // save file
+                if (![data writeToFile:filePath options:NSAtomicWrite error:&err]) {
+                    fileUri = [err localizedDescription];
+                } else {
+                    fileUri = [[self urlTransformer:[NSURL fileURLWithPath:filePath]] absoluteString];
+                }
+            }
+
+            NSArray *allUri = [[NSArray alloc] initWithObjects:nativeUri, fileUri, nil];
+
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[[allUri valueForKey:@"description"] componentsJoinedByString:@"|"]];
+        }
+            break;
         default:
             break;
     };

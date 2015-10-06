@@ -32,7 +32,9 @@ module.exports = {
     /** Return file uri (content://media/external/images/media/2 for Android) */
     FILE_URI: 1,
     /** Return native uri (eg. asset-library://... for iOS) */
-    NATIVE_URI: 2
+    NATIVE_URI: 2,
+    /** Return file and native uri */
+    ALL_URI: 3
   },
   /**
    * @enum {number}
