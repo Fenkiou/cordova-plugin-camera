@@ -144,7 +144,8 @@ static NSString* toBase64(NSData* data) {
 {
     self.hasPendingOperation = YES;
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveOverlayOverTakenPicture) name:@"_UIImagePickerControllerUserDidCaptureItem" object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveOverlayOverTakenPicture) name:@"_UIImagePickerControllerUserDidCaptureItem" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideOverlayOverTakenPicture) name:@"_UIImagePickerControllerUserDidCaptureItem" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveOverlayOverPreviewPicture) name:@"_UIImagePickerControllerUserDidRejectItem" object:nil];
 
     __weak CDVCamera* weakSelf = self;
@@ -260,6 +261,12 @@ static NSString* toBase64(NSData* data) {
     CGRect rect = [self defineRectForOverlayViewWithCustomPosY:83 andviewFrame:weakSelf.pickerController.view.frame];
 
     weakSelf.pickerController.cameraOverlayView.frame = rect;
+}
+
+- (void)hideOverlayOverTakenPicture {
+    __weak CDVCamera* weakSelf = self;
+
+    weakSelf.pickerController.cameraOverlayView.frame = CGRectMake(0, 0, 0, 0);;
 }
 
 - (void)moveOverlayOverPreviewPicture {
