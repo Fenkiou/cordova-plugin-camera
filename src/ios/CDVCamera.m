@@ -235,7 +235,7 @@ static NSString* toBase64(NSData* data) {
 }
 
 - (UIImageView*)addOverlayViewWithImageURI:(NSString*)imageURI andviewFrame:(CGRect)viewFrame {
-    CGRect rect = [self defineRectForOverlayViewWithCustomPosY:44 andviewFrame:viewFrame];
+    CGRect rect = [self defineRectForOverlayViewWithViewFrame:viewFrame];
 
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:rect];
 
@@ -255,14 +255,6 @@ static NSString* toBase64(NSData* data) {
     return imageView;
 }
 
-- (void)moveOverlayOverTakenPicture {
-    __weak CDVCamera* weakSelf = self;
-
-    CGRect rect = [self defineRectForOverlayViewWithCustomPosY:83 andviewFrame:weakSelf.pickerController.view.frame];
-
-    weakSelf.pickerController.cameraOverlayView.frame = rect;
-}
-
 - (void)hideOverlayOverTakenPicture {
     __weak CDVCamera* weakSelf = self;
 
@@ -272,12 +264,12 @@ static NSString* toBase64(NSData* data) {
 - (void)moveOverlayOverPreviewPicture {
     __weak CDVCamera* weakSelf = self;
 
-    CGRect rect = [self defineRectForOverlayViewWithCustomPosY:44 andviewFrame:weakSelf.pickerController.view.frame];
+    CGRect rect = [self defineRectForOverlayViewWithViewFrame:weakSelf.pickerController.view.frame];
 
     weakSelf.pickerController.cameraOverlayView.frame = rect;
 }
 
-- (CGRect)defineRectForOverlayViewWithCustomPosY:(CGFloat)customPosY andviewFrame:(CGRect)viewFrame {
+- (CGRect)defineRectForOverlayViewWithViewFrame:(CGRect)viewFrame {
     CGFloat previewPosX = 0;
     CGFloat previewPosY = 0;
     CGFloat screenHeight = viewFrame.size.height;
@@ -286,10 +278,20 @@ static NSString* toBase64(NSData* data) {
 
     CGFloat previewHeight = screenHeight;
 
-    if (screenHeight > 480)
+    // NSLog(@"%f", screenHeight);
+
+    /** 4-inch screens **/
+    if (screenHeight == 568)
     {
-        previewPosY = customPosY;
-        previewHeight = ceil(screenWidth * ratio);
+        previewPosY = 40;
+        previewHeight = ceil(screenWidth * ratio) + 1;
+    }
+
+    /** 4.7-inch screens **/
+    if (screenHeight == 667)
+    {
+        previewPosY = 44;
+        previewHeight = ceil(screenWidth * ratio) + 1;
     }
 
     CGRect rect = CGRectMake(previewPosX, previewPosY, screenWidth, previewHeight);
