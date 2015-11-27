@@ -167,6 +167,7 @@
          <framework src="CoreGraphics.framework" />
          <framework src="AVFoundation.framework" />
          <framework src="Photos.framework" />
+         <framework src="CoreImage.framework" />
 
      </platform>
 

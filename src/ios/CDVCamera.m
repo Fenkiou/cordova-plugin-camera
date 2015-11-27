@@ -248,8 +248,15 @@ static NSString* toBase64(NSData* data) {
     PHImageManager *imageManager = [[PHImageManager alloc] init];
 
     [imageManager requestImageDataForAsset:asset options:nil resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
-        UIImage *image = [UIImage imageWithData:imageData];
-        [imageView setImage:image];
+      UIImage *imageSource = [UIImage imageWithData:imageData];
+
+      if (imageSource.size.width > imageSource.size.height) {
+          CIImage *image = [CIImage imageWithData:imageData];
+
+          imageSource = [UIImage imageWithCIImage:image scale:1.0 orientation:UIImageOrientationRight];
+      }
+
+      [imageView setImage:imageSource];
     }];
 
     return imageView;
