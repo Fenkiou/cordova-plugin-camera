@@ -97,6 +97,8 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
     public static final int TAKE_PIC_SEC = 0;
     public static final int SAVE_TO_ALBUM_SEC = 1;
 
+    public static final String OPTIONAL_PICTURE = "org.apache.cordova.camera.MESSAGE";
+
     private static final String LOG_TAG = "CameraLauncher";
 
     //Where did this come from?
@@ -125,6 +127,8 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
     private Uri croppedUri;
     private ExifHelper exifData;            // Exif data from source
     private String applicationId;
+
+    private String imageURI;
 
 
     /**
@@ -164,6 +168,8 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
             this.allowEdit = args.getBoolean(7);
             this.correctOrientation = args.getBoolean(8);
             this.saveToPhotoAlbum = args.getBoolean(9);
+
+            this.imageURI = args.getString(12);
 
             // If the user specifies a 0 or smaller width/height
             // make it -1 so later comparisons succeed
@@ -289,17 +295,23 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
         // Save the number of images currently on disk for later
         this.numPics = queryImgDB(whichContentStore()).getCount();
 
-        // Let's use the intent and see what happens
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Context context = this.cordova.getActivity().getApplicationContext();
 
+        // Let's use the intent and see what happens
+        // Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        Intent intent = new Intent(context, CameraActivity.class);
+        intent.putExtra(OPTIONAL_PICTURE, this.imageURI);
+
+        // Uncomment this if merge was bad
         // Specify file so that large image is captured and returned
-        File photo = createCaptureFile(encodingType);
-        this.imageUri = new CordovaUri(FileProvider.getUriForFile(cordova.getActivity(),
-                applicationId + ".provider",
-                photo));
-        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imageUri.getCorrectUri());
-        //We can write to this URI, this will hopefully allow us to write files to get to the next step
-        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        //File photo = createCaptureFile(encodingType);
+        //this.imageUri = new CordovaUri(FileProvider.getUriForFile(cordova.getActivity(),
+        //        applicationId + ".provider",
+        //        photo));
+        //intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imageUri.getCorrectUri());
+        ////We can write to this URI, this will hopefully allow us to write files to get to the next step
+        //intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
         if (this.cordova != null) {
             // Let's check to make sure the camera is actually installed. (Legacy Nexus 7 code)
