@@ -97,7 +97,8 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
     public static final int TAKE_PIC_SEC = 0;
     public static final int SAVE_TO_ALBUM_SEC = 1;
 
-    public static final String OPTIONAL_PICTURE = "org.apache.cordova.camera.MESSAGE";
+    public static final String OPTIONAL_IMAGE_URI = "OPTIONAL_IMAGE_URI";
+    public static final String IMAGE_URI = "IMAGE_URI";
 
     private static final String LOG_TAG = "CameraLauncher";
 
@@ -128,7 +129,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
     private ExifHelper exifData;            // Exif data from source
     private String applicationId;
 
-    private String imageURI;
+    private String optionalImageUri;
 
 
     /**
@@ -169,7 +170,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
             this.correctOrientation = args.getBoolean(8);
             this.saveToPhotoAlbum = args.getBoolean(9);
 
-            this.imageURI = args.getString(12);
+            this.optionalImageUri = args.getString(12);
 
             // If the user specifies a 0 or smaller width/height
             // make it -1 so later comparisons succeed
@@ -297,21 +298,19 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
 
         Context context = this.cordova.getActivity().getApplicationContext();
 
-        // Let's use the intent and see what happens
-        // Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
         Intent intent = new Intent(context, CameraActivity.class);
-        intent.putExtra(OPTIONAL_PICTURE, this.imageURI);
+        intent.putExtra(OPTIONAL_IMAGE_URI, this.optionalImageUri);
 
-        // Uncomment this if merge was bad
         // Specify file so that large image is captured and returned
-        //File photo = createCaptureFile(encodingType);
+        File photo = createCaptureFile(encodingType);
         //this.imageUri = new CordovaUri(FileProvider.getUriForFile(cordova.getActivity(),
         //        applicationId + ".provider",
         //        photo));
         //intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imageUri.getCorrectUri());
+        intent.putExtra(IMAGE_URI, Uri.fromFile(photo).toString());
         ////We can write to this URI, this will hopefully allow us to write files to get to the next step
         //intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        this.imageUri = Uri.fromFile(photo);
 
         if (this.cordova != null) {
             // Let's check to make sure the camera is actually installed. (Legacy Nexus 7 code)
@@ -777,7 +776,6 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
      * @param intent      An Intent, which can return result data to the caller (various data can be attached to Intent "extras").
      */
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-
         // Get src and dest types from request code for a Camera Activity
         int srcType = (requestCode / 16) - 1;
         int destType = (requestCode % 16) - 1;
