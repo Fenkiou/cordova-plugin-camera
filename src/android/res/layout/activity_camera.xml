@@ -4,19 +4,57 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-    android:id="@+id/camera_preview"
-    android:layout_width="fill_parent"
-    android:layout_height="0dp"
-    android:layout_weight="0.43"
-    />
+        android:id="@+id/camera_preview"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.43"
+        />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button_capture"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/ic_camera"
-        android:background="@null"
-        android:layout_weight="0.01" />
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="96dp"
+        android:background="#222222">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/retake_button"
+            android:id="@+id/retake_button"
+            android:background="#00ffffff"
+            android:textColor="#ffffff"
+            android:layout_gravity="center_vertical|left"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="10dp" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/capture_button"
+            android:src="@drawable/ic_camera"
+            android:background="@null"
+            android:adjustViewBounds="false"
+            android:contentDescription="@string/capture_button"
+            android:layout_gravity="center"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/use_photo_button"
+            android:id="@+id/use_photo_button"
+            android:background="#00ffffff"
+            android:textColor="#ffffff"
+            android:layout_gravity="center_vertical|right"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="10dp" />
+
+    </RelativeLayout>
+
 
 </LinearLayout>

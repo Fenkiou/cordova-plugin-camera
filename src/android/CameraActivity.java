@@ -58,7 +58,7 @@ public class CameraActivity extends Activity {
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
 
-        ImageButton captureButton = (ImageButton) findViewById(R.id.button_capture);
+        ImageButton captureButton = (ImageButton) findViewById(R.id.capture_button);
         captureButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override

@@ -92,8 +92,10 @@
         <source-file src="src/android/ExifHelper.java" target-dir="src/org/apache/cordova/camera" />
         <source-file src="src/android/xml/provider_paths.xml" target-dir="res/xml" />
         <source-file src="src/android/CameraActivity.java" target-dir="src/org/apache/cordova/camera" />
+        <source-file src="src/android/CameraPreview.java" target-dir="src/org/apache/cordova/camera" />
         <source-file src="src/android/res/layout/activity_camera.xml" target-dir="res/layout" />
         <source-file src="src/android/res/drawable/ic_camera.xml" target-dir="res/drawable" />
+        <source-file src="src/android/res/values/strings.xml" target-dir="res/values" />
 
         <js-module src="www/CameraPopoverHandle.js" name="CameraPopoverHandle">
             <clobbers target="CameraPopoverHandle" />

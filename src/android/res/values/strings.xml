@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">retake-it</string>
+    <string name="launcher_name">@string/app_name</string>
+    <string name="activity_name">@string/launcher_name</string>
+    <string name="retake_button">Retake</string>
+    <string name="capture_button">Capture button</string>
+    <string name="use_photo_button">Use Photo</string>
+</resources>
