@@ -74,6 +74,10 @@
             <uses-feature android:name="android.hardware.camera" />
             <uses-feature android:name="android.hardware.camera.autofocus" />
         </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <activity android:name="org.apache.cordova.camera.CameraActivity" android:screenOrientation="portrait" />
+        </config-file>
+
         <config-file target="AndroidManifest.xml" parent="application">
           <provider
               android:name="android.support.v4.content.FileProvider"
