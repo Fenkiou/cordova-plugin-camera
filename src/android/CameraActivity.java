@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
@@ -31,6 +32,9 @@ public class CameraActivity extends Activity {
     public static final int MEDIA_TYPE_IMAGE = 1;
 
     private static Uri imageUri;
+
+    private Button retakeButton;
+    private Button usePhotoButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,11 +63,34 @@ public class CameraActivity extends Activity {
         preview.addView(mPreview);
 
         ImageButton captureButton = (ImageButton) findViewById(R.id.capture_button);
+
         captureButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mCamera.takePicture(null, null, mPicture);
+                    }
+                }
+        );
+
+        retakeButton = (Button) findViewById(R.id.retake_button);
+
+        retakeButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        recreate();
+                    }
+                }
+        );
+
+        usePhotoButton = (Button) findViewById(R.id.use_photo_button);
+
+        usePhotoButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
                     }
                 }
         );
@@ -74,6 +101,19 @@ public class CameraActivity extends Activity {
         super.onPause();
         releaseCamera();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        releaseCamera();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        releaseCamera();
+    }
+
 
     /** A safe way to get an instance of the Camera object. */
     public static Camera getCameraInstance(){
@@ -97,7 +137,11 @@ public class CameraActivity extends Activity {
     private PictureCallback mPicture = new PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
+            retakeButton.setVisibility(View.VISIBLE);
+            usePhotoButton.setVisibility(View.VISIBLE);
+
             File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+
             if (pictureFile == null){
                 Log.d(LOG_TAG, "Error creating media file, check storage permissions");
                 return;
@@ -139,7 +183,6 @@ public class CameraActivity extends Activity {
             return null;
         }
 
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         File mediaFile;
 
         if (type == MEDIA_TYPE_IMAGE){
