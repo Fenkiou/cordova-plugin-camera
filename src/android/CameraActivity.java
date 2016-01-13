@@ -2,18 +2,23 @@ package org.apache.cordova.camera;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,7 +31,7 @@ public class CameraActivity extends Activity {
 
     private Camera mCamera;
     private CameraPreview mPreview;
-    private  OrientationEventListener orientationListener;
+    private OrientationEventListener orientationListener;
 
     private static final String LOG_TAG = "CameraActivity";
 
@@ -117,6 +122,8 @@ public class CameraActivity extends Activity {
         };
 
         orientationListener.enable();
+
+        setBackgroundPicture(optionalImageUri);
     }
 
     @Override
@@ -139,9 +146,16 @@ public class CameraActivity extends Activity {
         mCamera.setParameters(parameters);
         mCamera.setDisplayOrientation(90);
 
-        mPreview = new CameraPreview(this, mCamera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(mPreview);
+        CameraPreview preview = (CameraPreview) findViewById(R.id.camera_preview);
+        preview.init(mCamera);
+
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+
+        int width = displaymetrics.widthPixels;
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(width, (int) (width * 1.33));
+        preview.setLayoutParams(params);
     }
 
     private void setCameraRotation(int rotation) {
@@ -150,6 +164,39 @@ public class CameraActivity extends Activity {
         parameters.setRotation(rotation);
 
         mCamera.setParameters(parameters);
+    }
+
+    private void setBackgroundPicture(String imageUri) {
+        File imgFile = new  File(imageUri);
+
+        if (imgFile.exists()){
+
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+
+            ImageView myImage = (ImageView) findViewById(R.id.background_picture);
+
+            DisplayMetrics displaymetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+
+            int width = displaymetrics.widthPixels;
+
+            if (myBitmap.getWidth() > myBitmap.getHeight()) {
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(myBitmap, (int) (width * 1.33), width, true);
+
+                Matrix matrix = new Matrix();
+                matrix.postRotate(90);
+
+                myBitmap = Bitmap.createBitmap(scaledBitmap , 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+            }
+
+            myImage.setImageBitmap(myBitmap);
+            myImage.setAlpha((float) 0.5);
+
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(width, (int) (width * 1.33));
+
+            myImage.setLayoutParams(params);
+
+        }
     }
 
     /** A safe way to get an instance of the Camera object. */

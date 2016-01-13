@@ -2,6 +2,7 @@ package org.apache.cordova.camera;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -15,9 +16,21 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     private static final String LOG_TAG = "CameraPreview";
 
+    public CameraPreview(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
 
-    public CameraPreview(Context context, Camera camera) {
+    public CameraPreview(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public CameraPreview(Context context) {
         super(context);
+    }
+
+    public void init(Camera camera) {
+        if (mCamera == camera) { return; }
+
         mCamera = camera;
 
         // Install a SurfaceHolder.Callback so we get notified when the6
