@@ -30,7 +30,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/retake_button"
+            android:text="Retake"
             android:id="@+id/retake_button"
             android:background="#00ffffff"
             android:textColor="#ffffff"
@@ -48,7 +48,6 @@
             android:src="@drawable/ic_camera"
             android:background="@null"
             android:adjustViewBounds="false"
-            android:contentDescription="@string/capture_button"
             android:layout_gravity="center"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />
@@ -56,7 +55,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/use_photo_button"
+            android:text="Use Photo"
             android:id="@+id/use_photo_button"
             android:background="#00ffffff"
             android:textColor="#ffffff"

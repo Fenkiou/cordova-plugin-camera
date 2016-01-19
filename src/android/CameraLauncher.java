@@ -128,7 +128,6 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
 
     private String optionalImageUri;
 
-
     /**
      * Executes the request and returns PluginResult.
      *
@@ -611,7 +610,9 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
         String imageFileName = "IMG_" + timeStamp + (this.encodingType == JPEG ? ".jpg" : ".png");
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
-        storageDir.mkdirs();
+        if (!storageDir.exists()) {
+            storageDir.mkdirs();
+        }
         String galleryPath = storageDir.getAbsolutePath() + "/" + imageFileName;
         return galleryPath;
     }
@@ -871,6 +872,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
     private void writeUncompressedImage(InputStream fis, Uri dest) throws FileNotFoundException,
             IOException {
         OutputStream os = null;
+
         try {
             os = this.cordova.getActivity().getContentResolver().openOutputStream(dest);
             byte[] buffer = new byte[4096];
