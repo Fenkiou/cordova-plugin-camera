@@ -63,6 +63,7 @@ typedef NSUInteger CDVMediaType;
 @property (assign) BOOL cropToSize;
 
 @property (assign) NSString* imageURI;
+@property (assign) float alpha;
 
 + (instancetype) createFromTakePictureArguments:(CDVInvokedUrlCommand*)command;
 

@@ -86,6 +86,7 @@ static NSString* toBase64(NSData* data) {
     pictureOptions.usesGeolocation = NO;
 
     pictureOptions.imageURI = [command argumentAtIndex:12 withDefault:nil];
+    pictureOptions.alpha = [[command argumentAtIndex:13 withDefault:nil] doubleValue] / 100;
 
 
     return pictureOptions;
@@ -199,7 +200,7 @@ static NSString* toBase64(NSData* data) {
             UIImageView *imageView = [self addOverlayViewWithImageURI:pictureOptions.imageURI andviewFrame:weakSelf.pickerController.view.frame];
 
             weakSelf.pickerController.cameraOverlayView = imageView;
-            weakSelf.pickerController.cameraOverlayView.alpha = 0.5;
+            weakSelf.pickerController.cameraOverlayView.alpha = pictureOptions.alpha;
             weakSelf.pickerController.cameraOverlayView.userInteractionEnabled = NO;
 
             [weakSelf.pickerController.view addSubview:weakSelf.pickerController.cameraOverlayView];

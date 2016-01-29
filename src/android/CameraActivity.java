@@ -52,6 +52,7 @@ public class CameraActivity extends Activity {
         Intent intent = getIntent();
         String optionalImageUri = intent.getStringExtra(CameraLauncher.OPTIONAL_IMAGE_URI);
         imageUri = Uri.parse(intent.getStringExtra(CameraLauncher.IMAGE_URI));
+        float alpha = Float.parseFloat(intent.getStringExtra(CameraLauncher.ALPHA)) / 100;
 
         setCameraPreview();
 
@@ -123,7 +124,7 @@ public class CameraActivity extends Activity {
 
         orientationListener.enable();
 
-        setBackgroundPicture(optionalImageUri);
+        setBackgroundPicture(optionalImageUri, alpha);
     }
 
     @Override
@@ -166,7 +167,7 @@ public class CameraActivity extends Activity {
         mCamera.setParameters(parameters);
     }
 
-    private void setBackgroundPicture(String imageUri) {
+    private void setBackgroundPicture(String imageUri, float alpha) {
         File imgFile = new  File(imageUri);
 
         if (imgFile.exists()){
@@ -190,7 +191,7 @@ public class CameraActivity extends Activity {
             }
 
             myImage.setImageBitmap(myBitmap);
-            myImage.setAlpha((float) 0.5);
+            myImage.setAlpha(alpha);
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(width, (int) (width * 1.33));
 

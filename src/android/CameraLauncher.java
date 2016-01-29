@@ -96,6 +96,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
 
     public static final String OPTIONAL_IMAGE_URI = "OPTIONAL_IMAGE_URI";
     public static final String IMAGE_URI = "IMAGE_URI";
+    public static final String ALPHA = "ALPHA";
 
     private static final String LOG_TAG = "CameraLauncher";
 
@@ -127,6 +128,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
     private String applicationId;
 
     private String optionalImageUri;
+    private String alpha;
 
     /**
      * Executes the request and returns PluginResult.
@@ -167,6 +169,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
             this.saveToPhotoAlbum = args.getBoolean(9);
 
             this.optionalImageUri = args.getString(12);
+            this.alpha = args.getString(13);
 
             // If the user specifies a 0 or smaller width/height
             // make it -1 so later comparisons succeed
@@ -296,6 +299,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
 
         Intent intent = new Intent(context, CameraActivity.class);
         intent.putExtra(OPTIONAL_IMAGE_URI, this.optionalImageUri);
+        intent.putExtra(ALPHA, this.alpha);
 
         // Specify file so that large image is captured and returned
         File photo = createCaptureFile(encodingType);
@@ -373,6 +377,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
         Intent intent = new Intent();
         String title = GET_PICTURE;
         croppedUri = null;
+
         if (this.mediaType == PICTURE) {
             intent.setType("image/*");
             if (this.allowEdit) {
