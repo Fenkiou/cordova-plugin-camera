@@ -102,21 +102,12 @@ public class CameraActivity extends Activity {
                     setCameraRotation(90);
                 }
                 else if (orientation >= 225 && orientation < 315) {
-                    captureButton.setRotation(90);
-                    retakeButton.setRotation(90);
-                    usePhotoButton.setRotation(90);
                     setCameraRotation(0);
                 }
                 else if (orientation >= 135 && orientation < 225) {
-                    captureButton.setRotation(180);
-                    retakeButton.setRotation(180);
-                    usePhotoButton.setRotation(180);
                     setCameraRotation(270);
                 }
                 else {
-                    captureButton.setRotation(270);
-                    retakeButton.setRotation(270);
-                    usePhotoButton.setRotation(270);
                     setCameraRotation(180);
                 }
             }
