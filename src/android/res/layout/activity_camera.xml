@@ -27,13 +27,12 @@
         android:layout_height="fill_parent"
         android:background="#222222">
 
-        <Button
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Retake"
             android:id="@+id/retake_button"
-            android:background="#00ffffff"
-            android:textColor="#ffffff"
+            android:src="@drawable/ic_clear"
+            android:background="@null"
             android:layout_gravity="center_vertical|left"
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
@@ -52,13 +51,12 @@
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />
 
-        <Button
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Use Photo"
             android:id="@+id/use_photo_button"
-            android:background="#00ffffff"
-            android:textColor="#ffffff"
+            android:src="@drawable/ic_done"
+            android:background="@null"
             android:layout_gravity="center_vertical|right"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"

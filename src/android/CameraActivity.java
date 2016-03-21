@@ -40,8 +40,8 @@ public class CameraActivity extends Activity {
     private static Uri imageUri;
 
     private ImageButton captureButton;
-    private Button retakeButton;
-    private Button usePhotoButton;
+    private ImageButton retakeButton;
+    private ImageButton usePhotoButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +68,8 @@ public class CameraActivity extends Activity {
                 }
         );
 
-        retakeButton = (Button) findViewById(R.id.retake_button);
-        usePhotoButton = (Button) findViewById(R.id.use_photo_button);
+        retakeButton = (ImageButton) findViewById(R.id.retake_button);
+        usePhotoButton = (ImageButton) findViewById(R.id.use_photo_button);
 
         retakeButton.setRotation(270);
         usePhotoButton.setRotation(270);
