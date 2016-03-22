@@ -217,6 +217,8 @@ public class CameraActivity extends Activity {
             retakeButton.setVisibility(View.VISIBLE);
             usePhotoButton.setVisibility(View.VISIBLE);
 
+            mCamera.stopPreview();
+
             File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 
             if (pictureFile == null){
