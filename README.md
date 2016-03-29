@@ -304,6 +304,7 @@ to implementation specific.
 | DATA_URL | <code>number</code> | <code>0</code> | Return base64 encoded string. DATA_URL can be very memory intensive and cause app crashes or out of memory errors. Use FILE_URI or NATIVE_URI if possible |
 | FILE_URI | <code>number</code> | <code>1</code> | Return file uri (content://media/external/images/media/2 for Android) |
 | NATIVE_URI | <code>number</code> | <code>2</code> | Return native uri (eg. asset-library://... for iOS) |
+| ALL_URI | <code>number</code> | <code>3</code> | Return file and native uri |
 
 <a name="module_Camera.EncodingType"></a>
 

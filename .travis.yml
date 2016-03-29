@@ -89,4 +89,3 @@ script:
   node /tmp/paramedic/main.js --config pr/$PLATFORM --plugin $(pwd) --shouldUseSauce
   --buildName travis-plugin-camera-$TRAVIS_JOB_NUMBER;
   fi
-
