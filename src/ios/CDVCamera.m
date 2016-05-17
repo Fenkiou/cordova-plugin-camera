@@ -249,15 +249,27 @@ static NSString* toBase64(NSData* data) {
     PHImageManager *imageManager = [[PHImageManager alloc] init];
 
     [imageManager requestImageDataForAsset:asset options:nil resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
-      UIImage *imageSource = [UIImage imageWithData:imageData];
+        UIImage *imageSource = [UIImage imageWithData:imageData];
 
-      if (imageSource.size.width > imageSource.size.height) {
-          CIImage *image = [CIImage imageWithData:imageData];
+        if (imageSource.size.width > imageSource.size.height) {
+            CIImage *image = [CIImage imageWithData:imageData];
 
-          imageSource = [UIImage imageWithCIImage:image scale:1.0 orientation:UIImageOrientationRight];
-      }
+            UIImageOrientation orientation = UIImageOrientationRight;
 
-      [imageView setImage:imageSource];
+            if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+            {
+                orientation = UIImageOrientationLeft;
+
+                CGAffineTransform transform = CGAffineTransformMakeRotation(M_PI / 2);
+
+                [imageView setTransform:transform];
+                [imageView setFrame:CGRectMake(0, 0, rect.size.height, rect.size.width)];
+            }
+
+            imageSource = [UIImage imageWithCIImage:image scale:1.0 orientation:orientation];
+        }
+
+        [imageView setImage:imageSource];
     }];
 
     return imageView;
