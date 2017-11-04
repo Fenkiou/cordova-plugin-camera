@@ -145,7 +145,6 @@ static NSString* toBase64(NSData* data) {
 {
     self.hasPendingOperation = YES;
 
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveOverlayOverTakenPicture) name:@"_UIImagePickerControllerUserDidCaptureItem" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideOverlayOverTakenPicture) name:@"_UIImagePickerControllerUserDidCaptureItem" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveOverlayOverPreviewPicture) name:@"_UIImagePickerControllerUserDidRejectItem" object:nil];
 
@@ -252,8 +251,6 @@ static NSString* toBase64(NSData* data) {
         UIImage *imageSource = [UIImage imageWithData:imageData];
 
         if (imageSource.size.width > imageSource.size.height) {
-            CIImage *image = [CIImage imageWithData:imageData];
-
             UIImageOrientation orientation = UIImageOrientationRight;
 
             if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
@@ -266,7 +263,7 @@ static NSString* toBase64(NSData* data) {
                 [imageView setFrame:CGRectMake(0, 0, rect.size.height, rect.size.width)];
             }
 
-            imageSource = [UIImage imageWithCIImage:image scale:1.0 orientation:orientation];
+            imageSource = [UIImage imageWithCGImage:imageSource.CGImage scale:1.0 orientation:orientation];
         }
 
         [imageView setImage:imageSource];
@@ -297,8 +294,6 @@ static NSString* toBase64(NSData* data) {
     CGFloat ratio = 1.33;
 
     CGFloat previewHeight = screenHeight;
-
-    // NSLog(@"%f", screenHeight);
 
     /** 4-inch screens **/
     if (screenHeight == 568)
